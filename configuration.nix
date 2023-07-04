@@ -113,19 +113,24 @@
     };
   };
 
+  #Setup global editor variable for neovim
+  environment.variables = { EDITOR = "nvim"; };
+
+  #Steam needs this for some reason
+  programs.steam.enable = true; 
+
 
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
   #developer tools
-    vim
     vscode-with-extensions
     arduino
     gcc_multi
     python312
     cmake
     wget
-    neovim
+    vim-full
     ansible
     git
 
@@ -142,6 +147,7 @@
   #System Utilities
     rpi-imager
     nfs-utils
+    usbutils
 
   #Work Apps
     zoom-us
@@ -150,6 +156,9 @@
     vlc
     headsetcontrol
     gimp
+
+  #Games
+    steam
 
   #UI Tools
     gnome.gnome-tweaks
@@ -207,5 +216,6 @@
   # Before changing this value read the documentation for this option
   # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
   system.stateVersion = "23.05"; # Did you read the comment?
+
 
 }
