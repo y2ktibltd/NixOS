@@ -133,6 +133,8 @@
     vim-full
     ansible
     git
+    picotool
+    pico-sdk
 
   #Misc Apps
     freecad
@@ -217,5 +219,23 @@
   # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
   system.stateVersion = "23.05"; # Did you read the comment?
 
+  #bashrc config
+  programs = {
+
+  bash = {
+
+  shellInit = ''
+# If not running interactively, don't do anything
+[[ $- != *i* ]] && return
+alias ls='ls --color=auto'
+alias ll='ls -lh --color=auto'
+alias lla='ls -lah --color=auto'
+PS1='[\u@\h \W]\$ '
+neofetch
+'';
+
+  };
+
+  };
 
 }
