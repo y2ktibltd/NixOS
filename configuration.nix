@@ -14,7 +14,7 @@
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
 
-  networking.hostName = "GPDWinNixOS"; # Define your hostname.
+  networking.hostName = "TUFA16"; # Define your hostname.
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
 
   # Configure network proxy if necessary
@@ -51,15 +51,17 @@
 
   # Configure keymap in X11
   services.xserver = {
-    layout = "us";
-    xkbVariant = "";
+    xkb.layout = "us";
+    xkb.variant = "";
   };
+
+  # Enable Xbox Series X/S bluetooth connectivity
+  hardware.xpadneo.enable = true;
 
   # Enable CUPS to print documents.
   services.printing.enable = true;
 
   # Enable sound with pipewire.
-  sound.enable = true;
   hardware.pulseaudio.enable = false;
   security.rtkit.enable = true;
   services.pipewire = {
@@ -84,24 +86,27 @@
     description = "tom";
     extraGroups = [ "networkmanager" "wheel" ];
     packages = with pkgs; [
-    #  firefox
     #  thunderbird
     ];
   };
 
   # Enable automatic login for the user.
-  services.xserver.displayManager.autoLogin.enable = true;
-  services.xserver.displayManager.autoLogin.user = "tom";
+  services.displayManager.autoLogin.enable = true;
+  services.displayManager.autoLogin.user = "tom";
 
   # Workaround for GNOME autologin: https://github.com/NixOS/nixpkgs/issues/103746#issuecomment-945091229
   systemd.services."getty@tty1".enable = false;
   systemd.services."autovt@tty1".enable = false;
+
+  # Install firefox.
+  programs.firefox.enable = true;
 
   # Allow unfree packages
   nixpkgs.config.allowUnfree = true;
 
   #Automatic upgrades
   system.autoUpgrade.enable = true; 
+  system.autoUpgrade.allowReboot = true;
 
   #Automatic garbage collection and store deduplication
   nix = {
@@ -130,7 +135,7 @@
     python312
     cmake
     wget
-    vim-full
+    neovim
     ansible
     git
     picotool
@@ -143,7 +148,7 @@
 
   #Terminal Utilities
     tmux
-    htop
+    btop
     neofetch
 
   #System Utilities
@@ -167,30 +172,32 @@
 
   ];
 
-
   #NFS auto-mounts (fstab-like)
   fileSystems."/home/tom/Media/Media" = {
     device = "192.168.1.50:/mnt/user/Media";
-    fsType = "nfs";
+    fsType = "nfs4";
   };
   fileSystems."/home/tom/Media/Pics_Docs" = {
     device = "192.168.1.50:/mnt/user/Pics_Docs";
-    fsType = "nfs";
+    fsType = "nfs4";
   };
   fileSystems."/home/tom/Media/System" = {
     device = "192.168.1.50:/mnt/user/system";
-    fsType = "nfs";
+    fsType = "nfs4";
   };
   fileSystems."/home/tom/Media/Backup" = {
     device = "192.168.1.10:/mnt/Backup/Backup";
-    fsType = "nfs";
+    fsType = "nfs4";
+  };
+  fileSystems."/home/tom/Steam" = {
+    device = "/dev/disk/by-uuid/4d77b5c8-f2da-4623-b22e-00f82169faf7";
+    fsType = "ext4";
   };
 
   # Fonts go here
-  fonts.fonts = with pkgs; [
+  fonts.packages = with pkgs; [
 	nerdfonts
   ];
-  
 
   # Some programs need SUID wrappers, can be configured further or are
   # started in user sessions.
@@ -206,8 +213,15 @@
   services.openssh.enable = true;
 
   # Open ports in the firewall.
-  # networking.firewall.allowedTCPPorts = [ ... ];
-  # networking.firewall.allowedUDPPorts = [ ... ];
+  networking.firewall.allowedTCPPorts = [27040];
+  #networking.firewall.allowedUDPPorts = [... ];
+  #networking.firewall.allowedTCPPortRanges = [
+  #  { from = 4000; to = 4007; }
+  #  { from = 8000; to = 8010; }
+  #];
+  networking.firewall.allowedUDPPortRanges = [
+    { from = 27031; to = 27036; }
+  ];
   # Or disable the firewall altogether.
   # networking.firewall.enable = false;
 
@@ -217,25 +231,5 @@
   # this value at the release version of the first install of this system.
   # Before changing this value read the documentation for this option
   # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
-  system.stateVersion = "23.05"; # Did you read the comment?
-
-  #bashrc config
-  programs = {
-
-  bash = {
-
-  shellInit = ''
-# If not running interactively, don't do anything
-[[ $- != *i* ]] && return
-alias ls='ls --color=auto'
-alias ll='ls -lh --color=auto'
-alias lla='ls -lah --color=auto'
-PS1='[\u@\h \W]\$ '
-neofetch
-'';
-
-  };
-
-  };
-
+  system.stateVersion = "24.05"; # Did you read the comment?
 }
